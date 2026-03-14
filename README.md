@@ -1,48 +1,47 @@
-This is a Kotlin Multiplatform project targeting Android, iOS, Desktop (JVM).
+# Tugas 3 - Pengembangan Aplikasi Mobile
+## Aplikasi My Profile
+- **Nama:** Nabila Ramadhani Mujahidin
+- **NIM:** 123140062
+- **Kelas:** Pengembangan Aplikasi Mobile RB
 
-* [/composeApp](./composeApp/src) is for code that will be shared across your Compose Multiplatform applications.
-  It contains several subfolders:
-  - [commonMain](./composeApp/src/commonMain/kotlin) is for code that’s common for all targets.
-  - Other folders are for Kotlin code that will be compiled for only the platform indicated in the folder name.
-    For example, if you want to use Apple’s CoreCrypto for the iOS part of your Kotlin app,
-    the [iosMain](./composeApp/src/iosMain/kotlin) folder would be the right place for such calls.
-    Similarly, if you want to edit the Desktop (JVM) specific part, the [jvmMain](./composeApp/src/jvmMain/kotlin)
-    folder is the appropriate location.
+## Tampilan Aplikasi (Screenshot)
+<img width="446" height="986" alt="image" src="https://github.com/user-attachments/assets/6a348102-21aa-4ab0-9a4f-eca08ab41e6e" />
 
-* [/iosApp](./iosApp/iosApp) contains iOS applications. Even if you’re sharing your UI with Compose Multiplatform,
-  you need this entry point for your iOS app. This is also where you should add SwiftUI code for your project.
+## Fitur Aplikasi
 
-### Build and Run Android Application
+Aplikasi menampilkan informasi profil pengguna dengan komponen UI modern dari Compose Multiplatform, meliputi:
 
-To build and run the development version of the Android app, use the run configuration from the run widget
-in your IDE’s toolbar or build it directly from the terminal:
-- on macOS/Linux
-  ```shell
-  ./gradlew :composeApp:assembleDebug
-  ```
-- on Windows
-  ```shell
-  .\gradlew.bat :composeApp:assembleDebug
-  ```
+* Foto profil berbentuk circular dengan border kustom (warna pink)
+* Nama, Pekerjaan (Role), dan Status koneksi
+* Tombol interaktif "Open Bio / Close Bio" yang menampilkan/menyembunyikan deskripsi secara mulus menggunakan animasi
+* Tombol "Message" bergaya outlined
+* Informasi detail pengguna (dibungkus dalam Card):
+  * Email
+  * Instagram
+  * Education (Pendidikan)
 
-### Build and Run Desktop (JVM) Application
+## Komponen UI yang Digunakan
 
-To build and run the development version of the desktop app, use the run configuration from the run widget
-in your IDE’s toolbar or run it directly from the terminal:
-- on macOS/Linux
-  ```shell
-  ./gradlew :composeApp:run
-  ```
-- on Windows
-  ```shell
-  .\gradlew.bat :composeApp:run
-  ```
+Aplikasi ini menggunakan beberapa komponen utama dari Compose Material 3:
 
-### Build and Run iOS Application
+* Scaffold & TopAppBar (Kerangka dasar dan header atas)
+* Column, Row, Box (Untuk layouting)
+* Card (Sebagai wadah informasi dengan efek elevasi/bayangan)
+* Text (Untuk tipografi)
+* Button & OutlinedButton (Tombol aksi)
+* Image & Icon (Menampilkan foto profil dan ikon material)
+* Divider & Spacer (Untuk garis pemisah dan jarak antar elemen)
+* AnimatedVisibility (Untuk animasi transisi memunculkan/menyembunyikan Bio)
 
-To build and run the development version of the iOS app, use the run configuration from the run widget
-in your IDE’s toolbar or open the [/iosApp](./iosApp) directory in Xcode and run it from there.
+## Reusable Composable Functions
 
----
+Project ini menggunakan beberapa Composable Function yang reusable (dapat digunakan kembali), yaitu:
 
-Learn more about [Kotlin Multiplatform](https://www.jetbrains.com/help/kotlin-multiplatform-dev/get-started.html)…
+* `ProfileScreen()`
+  Menjadi kerangka utama atau screen pembungkus halaman profil.
+
+* `ProfileHeader()`
+  Menampilkan bagian atas profil yang berisi foto profil, nama, role, dan status singkat.
+
+* `InfoRowItem()`
+  Menampilkan setiap baris item informasi (seperti Email, Instagram, Education) yang menerima parameter berupa ikon, label, dan nilainya.
