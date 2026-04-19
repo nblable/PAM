@@ -111,3 +111,48 @@ Pada Tugas 5, aplikasi dirombak secara menyeluruh dari *single-file monolithic* 
 *<img width="445" height="956" alt="Image" src="https://github.com/user-attachments/assets/3f7a5404-0fa7-4f82-a982-430bdb72513a" />*
 *<img width="445" height="956" alt="Image" src="https://github.com/user-attachments/assets/d95a7e3a-000e-4eb3-b09e-d64ca8467792" />*
 *<img width="445" height="956" alt="Image" src="https://github.com/user-attachments/assets/a06e3b58-28a6-4dfe-9d14-cf6ca43b1e41" />*
+
+# Tugas 6 - Pengembangan Aplikasi Mobile
+## Pembaruan: Networking (REST API), Ktor Client & Asynchronous Data Fetching
+
+Pada Tugas 6, aplikasi ditingkatkan kemampuannya untuk berinteraksi dengan dunia luar melalui **Networking**. Aplikasi tidak lagi hanya mengelola data lokal, melainkan mengambil data berita internasional secara *real-time* dari internet menggunakan **REST API**. Fitur ini diintegrasikan ke dalam ekosistem aplikasi yang sudah ada dengan tetap mempertahankan **Tema Pink** dan arsitektur **MVVM**.
+
+## Fitur Baru Aplikasi
+
+* **Integrasi REST API:** Mengambil data berita terbaru seputar teknologi luar angkasa secara dinamis dari *Spaceflight News API*.
+* **Asynchronous Networking dengan Ktor:** Implementasi HTTP Client menggunakan library **Ktor** yang berjalan secara non-blocking di background thread menggunakan *Kotlin Coroutines*.
+* **Automated JSON Parsing:** Mengonversi data mentah JSON dari internet menjadi objek Kotlin secara otomatis menggunakan library **Kotlinx Serialization**.
+* **Handling Network UI States:** * **Loading State:** Menampilkan *Circular Progress Indicator* saat data sedang diunduh.
+  * **Success State:** Menampilkan daftar berita dalam bentuk kartu (Card) yang rapi dengan informasi judul dan ringkasan.
+  * **Error State:** Menampilkan pesan kesalahan dan tombol "Coba Lagi" jika koneksi internet terputus atau API bermasalah.
+* **Fitur Bookmark Berita:** Pengguna dapat menandai berita tertentu sebagai favorit (Bookmark). Status ini dikelola secara reaktif menggunakan `StateFlow` di dalam ViewModel.
+* **Navigasi Detail Berita:** Mendukung perpindahan layar dari daftar berita ke informasi detail berita secara lengkap.
+
+## Komponen & Teknologi Baru yang Digunakan
+
+* **Ktor Client (Core, ContentNegotiation, Logging):** Library utama untuk menangani request HTTP (GET) dan logging aktivitas jaringan.
+* **Kotlinx Serialization:** Digunakan untuk melakukan *encoding* dan *decoding* format JSON dengan tipe data yang aman (*type-safe*).
+* **Repository Pattern (Abstraction Layer):** Memisahkan logika pengambilan data (Network) dari logika bisnis (ViewModel) untuk mempermudah pengujian dan pemeliharaan kode.
+* **LazyColumn & Refresh Action:** Komponen untuk menampilkan daftar berita dalam jumlah banyak secara efisien serta fitur muat ulang manual menggunakan icon *Refresh* pada TopAppBar.
+* **Result Pattern:** Penggunaan kelas `Result<T>` di level Repository untuk menangkap *exception* (seperti `ConnectException`) agar aplikasi tidak *crash* saat jaringan bermasalah.
+
+## Struktur Data API (JSON Structure)
+
+Aplikasi mengonsumsi endpoint `https://api.spaceflightnewsapi.net/v4/articles/` dengan struktur data:
+* `title`: Judul berita internasional.
+* `summary`: Ringkasan konten berita.
+* `image_url`: URL gambar pendukung berita.
+* `url`: Link sumber berita asli sebagai ID unik untuk fitur bookmark.
+
+## Tampilan Aplikasi (Screenshot)
+
+| Daftar Berita | Detail Berita                                                                                                                      | State Loading |
+|---|------------------------------------------------------------------------------------------------------------------------------------|---|
+| <img width="366" height="799" alt="Image" src="https://github.com/user-attachments/assets/d1775477-c138-43bf-86dc-3c5c488065c9" /> | <img width="363" height="805" alt="Image" src="https://github.com/user-attachments/assets/64061b62-3909-42b8-a321-dec93b7d1025" /> | <img width="373" height="812" alt="Image" src="https://github.com/user-attachments/assets/05b24304-fec0-4ad1-a013-c17a00477757" /> |
+
+## Video Demonstrasi Aplikasi
+
+Berikut adalah rekaman demonstrasi fitur Networking, Navigasi, dan Bookmark pada Tugas 6:
+* **Link Video:** https://drive.google.com/file/d/1mqbnuXEWlgip2lIC9A7QZppZ72n452Qk/view?usp=drive_link
+
+---
