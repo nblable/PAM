@@ -1,19 +1,38 @@
-*.iml
-.kotlin
-.gradle
-**/build/
-xcuserdata
-!src/**/build/
+# Gradle files
+.gradle/
+.gradle-home/
+build/
+
+# Kotlin Multiplatform / Compose Multiplatform
+.kotlin/
+composeApp/build/
+iosApp/build/
+.common/
+
+# Android Specific
 local.properties
-.idea
+.navigation/
+captures/
+*.apk
+*.aar
+*.jks
+*.keystore
+
+# IntelliJ IDEA / Android Studio
+.idea/
+*.iml
+*.iws
+*.ipr
+out/
+cmake-build-*/
+
+# iOS / Xcode (Penting untuk KMP)
+iosApp/*.xcworkspace
+iosApp/xcuserdata/
+iosApp/DerivedData/
+iosApp/Podfile.lock
+iosApp/Pods/
+
+# System files
 .DS_Store
-captures
-.externalNativeBuild
-.cxx
-*.xcodeproj/*
-!*.xcodeproj/project.pbxproj
-!*.xcodeproj/xcshareddata/
-!*.xcodeproj/project.xcworkspace/
-!*.xcworkspace/contents.xcworkspacedata
-**/xcshareddata/WorkspaceSettings.xcsettings
-node_modules/
+thumbs.db
