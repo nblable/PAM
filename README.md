@@ -146,10 +146,9 @@ Aplikasi mengonsumsi endpoint `https://api.spaceflightnewsapi.net/v4/articles/` 
 
 ## Tampilan Aplikasi (Screenshot)
 
-| Daftar Berita | Detail Berita | State Loading |
-|---|---|---|
-| <img width="366" height="799" alt="Image" src="https://github.com/user-attachments/assets/d1775477-c138-43bf-86dc-3c5c488065c9" /> | <img width="363" height="805" alt="Image" src="https://github.com/user-attachments/assets/64061b62-3909-42b8-a321-dec93b7d1025" />
-| <img width="373" height="812" alt="Image" src="https://github.com/user-attachments/assets/05b24304-fec0-4ad1-a013-c17a00477757" /> |
+| Daftar Berita | Detail Berita                                                                                                                      | State Loading |
+|---|------------------------------------------------------------------------------------------------------------------------------------|---|
+| <img width="366" height="799" alt="Image" src="https://github.com/user-attachments/assets/d1775477-c138-43bf-86dc-3c5c488065c9" /> | <img width="363" height="805" alt="Image" src="https://github.com/user-attachments/assets/64061b62-3909-42b8-a321-dec93b7d1025" /> | <img width="373" height="812" alt="Image" src="https://github.com/user-attachments/assets/05b24304-fec0-4ad1-a013-c17a00477757" /> |
 
 ## Video Demonstrasi Aplikasi
 
