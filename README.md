@@ -1,55 +1,61 @@
-# 📝 MyFirstKMPApp - Tugas 7 PAM
+# Tugas 8: Pengembangan Aplikasi Mobile (KMP)
 
-Aplikasi Pencatatan (Notes App) lintas platform yang dikembangkan menggunakan **Kotlin Multiplatform (KMP)**. Proyek ini merupakan pemenuhan Tugas 7 untuk mata kuliah Pengembangan Aplikasi Mobile (PAM), yang berfokus pada implementasi arsitektur **MVVM** dan penyimpanan data lokal persisten menggunakan **SQLDelight** dan **DataStore**.
-
----
-
-## 🎯 Deskripsi Tugas & Pemenuhan Rubrik Penilaian
-
-Proyek ini telah dikembangkan dengan memenuhi kriteria rubrik penilaian berikut:
-
--  **SQLDelight (Local Database):** Implementasi database SQLite lokal untuk fitur *Create, Read, Update, Delete* (CRUD) serta pencarian catatan (Search).
--  **DataStore (Preferences):** Menyimpan pengaturan pengguna secara permanen, meliputi preferensi Tema (Gelap/Terang) dan mode Filter/Sort (Terbaru/Terlama).
--  **Arsitektur MVVM:** Pemisahan tanggung jawab yang jelas antara *View* (UI/Compose), *ViewModel* (Logic & StateFlow), dan *Model* (Entity Database).
--  **Repository Pattern:** Menggunakan `NoteRepository` dan `SettingsRepository` sebagai *Single Source of Truth* untuk interaksi data.
--  **Offline-First:** Aplikasi berfungsi 100% tanpa memerlukan koneksi internet.
+## Deskripsi Proyek
+Proyek ini adalah aplikasi catatan (Notes App) berbasis **Kotlin Multiplatform (KMP)** yang dikembangkan untuk memenuhi kriteria Tugas Praktikum Minggu 8. Fokus utama tugas ini adalah implementasi arsitektur **Dependency Injection (DI)**, penggunaan fitur spesifik platform melalui mekanisme **expect/actual**, serta peningkatan UI/UX menggunakan **Material 3**.
 
 ---
 
-## ✨ Fitur Utama
+## Fitur Utama (Kriteria Tugas 8)
 
-1. **Manajemen Catatan (CRUD):** Tambah, Edit, Hapus, dan Lihat catatan dengan mudah.
-2. **Pencarian Real-time:** Cari catatan berdasarkan judul atau isi teks.
-3. **Filter & Sortir:** Urutkan catatan dari yang *Terbaru* atau *Terlama* (tersimpan otomatis).
-4. **Tema Dinamis:** Beralih antara *Light Mode* (Tema Oranye/Terang) dan *Dark Mode* (Tema Gelap) dengan transisi animasi yang halus.
+### 1. Dependency Injection (Koin)
+Seluruh komponen aplikasi dikelola menggunakan **Koin DI** untuk memastikan kode yang *decoupled* dan mudah diuji.
+- **Injeksi Database & Driver**: Dikelola secara spesifik per platform.
+- **Injeksi ViewModel**: Menggunakan cakupan `factory` untuk efisiensi memori.
+- **Injeksi Repository & Settings**: Dikelola sebagai `single` instance.
 
----
+### 2. Platform-Specific Features (Expect/Actual)
+Berhasil mengimplementasikan akses ke API Native Android untuk fitur-fitur berikut:
+- **Device Info**: Menampilkan model perangkat dan versi sistem operasi.
+- **Network Monitor**: Pemantauan status koneksi internet secara *real-time*.
+- **Battery Info**: Menampilkan persentase baterai dan status pengisian daya (Charging).
 
-## 📸 Screenshots (Tangkapan Layar)
-
-*Catatan: Ganti placeholder di bawah ini dengan link/path screenshot dari aplikasimu.*
-
-| Tampilan Daftar Catatan (Light Mode) |                                                Tampilan Daftar Catatan (Dark Mode)                                                 |                                                       Fitur Search & Filter                                                        | Dialog Tambah/Edit Catatan |
-| :---: |:----------------------------------------------------------------------------------------------------------------------------------:|:----------------------------------------------------------------------------------------------------------------------------------:| :---: |
-| <img width="425" height="944" alt="Image" src="https://github.com/user-attachments/assets/9d3d66fe-c7a9-4a0c-8128-aea07252af8c" /> | <img width="426" height="944" alt="Image" src="https://github.com/user-attachments/assets/6d167323-46d8-4f86-bdff-70e6d3a1b9e0" /> | <img width="426" height="944" alt="Image" src="https://github.com/user-attachments/assets/eaefd4db-820b-4929-a62d-bc94cc619fea" /> | <img width="426" height="944" alt="Image" src="https://github.com/user-attachments/assets/d2ade789-13aa-4a7a-98bf-e3223f9e5732" /> |
-
----
-
-## 🎥 Video Demonstrasi
-
-Untuk melihat bagaimana aplikasi berjalan, interaksi UI, dan persistensi data (saat aplikasi ditutup lalu dibuka kembali), silakan tonton video demo melalui tautan di bawah ini:
-
-👉 **https://drive.google.com/file/d/1-QDsZAybIUsVWhsmSm_0RgP12u-n7kyt/view?usp=sharing**
+### 3. UI/UX & Interaktivitas
+- **Material 3 Design**: Menggunakan skema warna Pink yang modern.
+- **Navigation Drawer**: Menu navigasi samping untuk akses cepat ke berbagai halaman.
+- **Search & Sort**: Pencarian teks pada catatan dan pengurutan (Terbaru/Terlama) langsung melalui query SQLDelight.
+- **Offline Indicator**: Munculnya banner peringatan otomatis saat koneksi internet terputus.
+- **Tema Dinamis**: Dukungan penuh untuk Mode Terang (Light) dan Mode Gelap (Dark).
 
 ---
 
-## 🛠️ Teknologi yang Digunakan
-
-* **Kotlin Multiplatform (KMP)** - Berbagi logika bisnis dan UI.
-* **Compose Multiplatform** - Framework UI deklaratif.
-* **SQLDelight** - Pembuatan antarmuka database *type-safe* untuk SQLite.
-* **Jetpack DataStore** - Penyimpanan konfigurasi *key-value* secara asinkron.
-* **Coroutines & Flow** - Manajemen *asynchronous* dan *reactive programming*.
-* **Material Design 2** - Komponen antarmuka pengguna (UI).
+## Arsitektur Aplikasi
+Aplikasi ini menggunakan pola arsitektur **MVVM (Model-View-ViewModel)** yang terintegrasi dengan Koin:
+- **Model**: SQLDelight untuk penyimpanan lokal.
+- **View**: Jetpack Compose Multiplatform.
+- **ViewModel**: Mengelola state UI menggunakan `StateFlow` dan menangani logika bisnis.
+- **Repository**: Mengabstraksi sumber data untuk ViewModel.
 
 ---
+
+## Dokumentasi Visual
+
+### Screenshots Aplikasi
+| Daftar Catatan |                                                         Halaman Settings                                                          | Indikator Offline |
+| :---: |:---------------------------------------------------------------------------------------------------------------------------------:| :---: |
+| <img width="434" height="945" alt="Image" src="https://github.com/user-attachments/assets/c2aa4d08-d678-4515-ac08-0eb139ded48f" /> |<img width="434" height="945" alt="Image" src="https://github.com/user-attachments/assets/3272ad7d-a702-4dc4-a29c-3475ff49085a" /> | <img width="434" height="945" alt="Image" src="https://github.com/user-attachments/assets/ed09ac0c-3d52-4805-aaac-f285e15c4390" /> |
+
+---
+
+## Video Demo Aplikasi
+Anda dapat melihat demo fitur-fitur Tugas 8 (durasi ±45 detik) melalui tautan di bawah ini:
+
+🔗 **https://drive.google.com/file/d/1f6DS1fhP4RA2IBLDU2lgknUen5rpgxgM/view?usp=sharing**
+
+**Cakupan Video:**
+1. Bukti inisialisasi Koin di kode program.
+2. Demonstrasi fungsionalitas CRUD, Search, dan Sort.
+3. Simulasi mematikan koneksi internet (Banner Offline muncul).
+4. Penjelasan informasi perangkat dan baterai di halaman Settings.
+
+---
+*Proyek ini dikembangkan menggunakan Kotlin Multiplatform dan Jetpack Compose.*

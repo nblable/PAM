@@ -1,100 +1,55 @@
-package com.example.myfirstkmpapp.screens
+package com.example.myfirstkmpapp.screen
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Delete
-import androidx.compose.material.icons.filled.Edit
+import androidx.compose.material3.*
 import androidx.compose.runtime.*
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import com.example.myfirstkmpapp.NoteEntity
 import com.example.myfirstkmpapp.viewmodel.NotesViewModel
 
 @Composable
-fun NotesListScreen(
+fun NotesScreen(
     viewModel: NotesViewModel,
-    onEditClick: (NoteEntity) -> Unit
+    onAddClick: () -> Unit,
+    onEditClick: (Long) -> Unit
 ) {
     val notes by viewModel.notes.collectAsState()
 
-    if (notes.isEmpty()) {
-        Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-            Text("Tidak ada catatan", style = MaterialTheme.typography.h6)
+    Scaffold(
+        floatingActionButton = {
+            FloatingActionButton(onClick = onAddClick, containerColor = MaterialTheme.colorScheme.primary) {
+                Icon(Icons.Default.Add, null, tint = Color.White)
+            }
         }
-    } else {
-        LazyColumn(contentPadding = PaddingValues(16.dp)) {
-            items(notes) { note ->
-                Card(
-                    modifier = Modifier.fillMaxWidth().padding(vertical = 4.dp).clickable { onEditClick(note) },
-                    elevation = 4.dp,
-                    shape = RoundedCornerShape(8.dp)
-                ) {
-                    Row(
-                        modifier = Modifier.padding(16.dp),
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
-                        Column(modifier = Modifier.weight(1f)) {
-                            Text(note.title, fontWeight = FontWeight.Bold, style = MaterialTheme.typography.subtitle1)
-                            Spacer(modifier = Modifier.height(4.dp))
-                            Text(note.content, style = MaterialTheme.typography.body2, maxLines = 2)
+    ) { padding ->
+        if (notes.isEmpty()) {
+            Box(Modifier.fillMaxSize(), contentAlignment = androidx.compose.ui.Alignment.Center) {
+                Text("Tidak ada catatan found.")
+            }
+        } else {
+            LazyColumn(modifier = Modifier.fillMaxSize().padding(padding)) {
+                items(notes) { note ->
+                    ListItem(
+                        headlineContent = { Text(note.title, fontWeight = FontWeight.Bold) },
+                        supportingContent = { Text(note.content, maxLines = 2) },
+                        modifier = Modifier.clickable { onEditClick(note.id) },
+                        trailingContent = {
+                            IconButton(onClick = { viewModel.deleteNote(note.id) }) {
+                                Icon(Icons.Default.Delete, null, tint = MaterialTheme.colorScheme.error)
+                            }
                         }
-                        IconButton(onClick = { onEditClick(note) }) {
-                            Icon(Icons.Default.Edit, contentDescription = "Edit", tint = MaterialTheme.colors.primary)
-                        }
-                        IconButton(onClick = { viewModel.deleteNote(note.id) }) {
-                            Icon(Icons.Default.Delete, contentDescription = "Delete", tint = Color.Red)
-                        }
-                    }
+                    )
+                    HorizontalDivider(modifier = Modifier.padding(horizontal = 16.dp))
                 }
             }
         }
     }
-}
-
-@Composable
-fun NoteDialog(
-    initialTitle: String = "",
-    initialContent: String = "",
-    onDismiss: () -> Unit,
-    onSave: (String, String) -> Unit
-) {
-    var title by remember { mutableStateOf(initialTitle) }
-    var content by remember { mutableStateOf(initialContent) }
-
-    AlertDialog(
-        onDismissRequest = onDismiss,
-        title = { Text(if (initialTitle.isEmpty()) "Tambah Catatan" else "Edit Catatan") },
-        text = {
-            Column {
-                OutlinedTextField(
-                    value = title,
-                    onValueChange = { title = it },
-                    label = { Text("Judul") },
-                    modifier = Modifier.fillMaxWidth()
-                )
-                Spacer(modifier = Modifier.height(8.dp))
-                OutlinedTextField(
-                    value = content,
-                    onValueChange = { content = it },
-                    label = { Text("Isi Catatan") },
-                    modifier = Modifier.fillMaxWidth().height(120.dp),
-                    maxLines = 5
-                )
-            }
-        },
-        confirmButton = {
-            Button(onClick = { onSave(title, content) }) { Text("Simpan") }
-        },
-        dismissButton = {
-            TextButton(onClick = onDismiss) { Text("Batal") }
-        }
-    )
 }
