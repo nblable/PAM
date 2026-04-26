@@ -21,18 +21,16 @@ class NotesViewModel(
     val isSortByNewest = settingsRepository.isSortByNewest
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(), true)
 
-    // Menggabungkan Data Catatan + Fitur Pencarian + Fitur Filter (Sort)
     val notes = combine(_searchQuery, settingsRepository.isSortByNewest) { query, isNewest ->
         Pair(query, isNewest)
     }.flatMapLatest { (query, isNewest) ->
         val sourceFlow = if (query.isBlank()) repository.getNotes() else repository.searchNotes(query)
 
-        // Lakukan sorting berdasarkan pilihan Filter
         sourceFlow.map { list ->
             if (isNewest) {
-                list.sortedByDescending { it.createdAt } // Paling baru di atas
+                list.sortedByDescending { it.createdAt }
             } else {
-                list.sortedBy { it.createdAt } // Paling lama di atas
+                list.sortedBy { it.createdAt }
             }
         }
     }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), emptyList())

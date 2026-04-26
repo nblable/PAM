@@ -1,52 +1,55 @@
-# My Notes App - Kotlin Multiplatform (KMP)
-## Tugas Minggu 07: Local Data Storage (SQLDelight & DataStore)
+# 📝 MyFirstKMPApp - Tugas 7 PAM
 
-Aplikasi ini merupakan implementasi pengelolaan catatan (Notes) menggunakan **Compose Multiplatform** dengan fokus pada penyimpanan data lokal sesuai materi pertemuan 7 Pengembangan Aplikasi Mobile (PAM) ITERA. Aplikasi mendukung operasi CRUD (Create, Read, Update, Delete) yang persisten menggunakan **SQLDelight** dan pengelolaan preferensi menggunakan **Multiplatform Settings**.
-
-### 🔍 Deskripsi Tugas & Materi 7
-Berdasarkan rubrik penilaian dan materi pertemuan 7, proyek ini mencakup:
-1.  **SQLDelight:** Implementasi database type-safe untuk penyimpanan catatan secara permanen di perangkat menggunakan SQLite.
-2.  **Repository Pattern:** Abstraksi data layer untuk memisahkan logika bisnis dengan sumber data (Local Storage).
-3.  **DataStore / Multiplatform Settings:** Penyimpanan preferensi pengguna seperti tema (Light/Dark/System) dan urutan pengurutan (Newest/Oldest).
-4.  **KMP Architecture:** Berbagi logika kode (CommonMain) antara Android dan platform lainnya menggunakan pola Expect/Actual untuk Driver Database.
+Aplikasi Pencatatan (Notes App) lintas platform yang dikembangkan menggunakan **Kotlin Multiplatform (KMP)**. Proyek ini merupakan pemenuhan Tugas 7 untuk mata kuliah Pengembangan Aplikasi Mobile (PAM), yang berfokus pada implementasi arsitektur **MVVM** dan penyimpanan data lokal persisten menggunakan **SQLDelight** dan **DataStore**.
 
 ---
 
-### 🛠️ Fitur Utama
--   **Full CRUD:**
-  -   **Create:** Menambah catatan baru dengan judul dan isi.
-  -   **Read:** Menampilkan daftar catatan secara real-time menggunakan `Flow`.
-  -   **Update:** Mengubah isi catatan yang sudah ada melalui layar editor.
-  -   **Delete:** Menghapus catatan langsung dari database melalui tombol di setiap item catatan.
--   **Pencarian (Search):** Mencari catatan secara dinamis berdasarkan kata kunci pada judul atau konten menggunakan query `LIKE`.
--   **Manajemen Tema:** Pilihan tema **Light**, **Dark**, atau **System** dengan aksen warna Pink sesuai preferensi UI.
--   **Pengurutan (Sorting):** Fitur untuk mengurutkan catatan berdasarkan waktu update (Terbaru atau Terlama).
--   **UI Responsif:** Dibangun menggunakan Material Design 3 dengan Scaffold, FloatingActionButton, dan ModalNavigationDrawer.
+## 🎯 Deskripsi Tugas & Pemenuhan Rubrik Penilaian
+
+Proyek ini telah dikembangkan dengan memenuhi kriteria rubrik penilaian berikut:
+
+-  **SQLDelight (Local Database):** Implementasi database SQLite lokal untuk fitur *Create, Read, Update, Delete* (CRUD) serta pencarian catatan (Search).
+-  **DataStore (Preferences):** Menyimpan pengaturan pengguna secara permanen, meliputi preferensi Tema (Gelap/Terang) dan mode Filter/Sort (Terbaru/Terlama).
+-  **Arsitektur MVVM:** Pemisahan tanggung jawab yang jelas antara *View* (UI/Compose), *ViewModel* (Logic & StateFlow), dan *Model* (Entity Database).
+-  **Repository Pattern:** Menggunakan `NoteRepository` dan `SettingsRepository` sebagai *Single Source of Truth* untuk interaksi data.
+-  **Offline-First:** Aplikasi berfungsi 100% tanpa memerlukan koneksi internet.
 
 ---
 
-### 🏗️ Arsitektur Kode
-Proyek ini mengikuti pola arsitektur yang direkomendasikan pada materi kuliah:
--   **`commonMain`**: Berisi logika utama aplikasi.
-  -   `data/local`: Definisi `DatabaseDriverFactory` (Expect/Actual).
-  -   `data/repository`: `NoteRepository` sebagai mediator antara UI dan data source.
-  -   `data/settings`: `SettingsManager` menggunakan library `multiplatform-settings` (alternatif DataStore di KMP).
-  -   `viewmodel`: `NotesViewModel` mengelola state UI menggunakan `StateFlow`.
-  -   `screens`: UI Components (NotesScreen, NoteEditorScreen, SettingsScreen).
--   **`sqldelight`**: Berisi file `Note.sq` yang mendefinisikan skema tabel dan query SQL.
+## ✨ Fitur Utama
+
+1. **Manajemen Catatan (CRUD):** Tambah, Edit, Hapus, dan Lihat catatan dengan mudah.
+2. **Pencarian Real-time:** Cari catatan berdasarkan judul atau isi teks.
+3. **Filter & Sortir:** Urutkan catatan dari yang *Terbaru* atau *Terlama* (tersimpan otomatis).
+4. **Tema Dinamis:** Beralih antara *Light Mode* (Tema Oranye/Terang) dan *Dark Mode* (Tema Gelap) dengan transisi animasi yang halus.
 
 ---
 
-### 📸 Screenshots
-Berikut adalah tampilan antarmuka :
+## 📸 Screenshots (Tangkapan Layar)
 
-| Daftar Note | Tambah/Edit Note | Settings  |
-| :---: | :---: |:---------:|
-| <img width="341" height="742" alt="Image" src="https://github.com/user-attachments/assets/33467a7d-02a0-432f-b1a0-138475941714" /> | <img width="341" height="742" alt="Image" src="https://github.com/user-attachments/assets/9a436027-4cbc-401c-92c9-cb87bdcc09de" /> | <img width="252" height="554" alt="Image" src="https://github.com/user-attachments/assets/4bc95bd4-4cbe-49c3-b8a1-d1b1091be615" />          |
+*Catatan: Ganti placeholder di bawah ini dengan link/path screenshot dari aplikasimu.*
+
+| Tampilan Daftar Catatan (Light Mode) |                                                Tampilan Daftar Catatan (Dark Mode)                                                 |                                                       Fitur Search & Filter                                                        | Dialog Tambah/Edit Catatan |
+| :---: |:----------------------------------------------------------------------------------------------------------------------------------:|:----------------------------------------------------------------------------------------------------------------------------------:| :---: |
+| <img width="425" height="944" alt="Image" src="https://github.com/user-attachments/assets/9d3d66fe-c7a9-4a0c-8128-aea07252af8c" /> | <img width="426" height="944" alt="Image" src="https://github.com/user-attachments/assets/6d167323-46d8-4f86-bdff-70e6d3a1b9e0" /> | <img width="426" height="944" alt="Image" src="https://github.com/user-attachments/assets/eaefd4db-820b-4929-a62d-bc94cc619fea" /> | <img width="426" height="944" alt="Image" src="https://github.com/user-attachments/assets/d2ade789-13aa-4a7a-98bf-e3223f9e5732" /> |
 
 ---
 
-### 🎥 Demo Video
-Untuk melihat demonstrasi fitur CRUD (Create, Read, Update, Delete), fitur pencarian, serta perpindahan tema secara real-time, silakan klik tautan di bawah ini:
+## 🎥 Video Demonstrasi
 
-👉 **https://drive.google.com/file/d/1lQqOhiyD1GuAHbCrYA7EO8vepheJ08LQ/view?usp=sharing**
+Untuk melihat bagaimana aplikasi berjalan, interaksi UI, dan persistensi data (saat aplikasi ditutup lalu dibuka kembali), silakan tonton video demo melalui tautan di bawah ini:
+
+👉 **https://drive.google.com/file/d/1-QDsZAybIUsVWhsmSm_0RgP12u-n7kyt/view?usp=sharing**
+
+---
+
+## 🛠️ Teknologi yang Digunakan
+
+* **Kotlin Multiplatform (KMP)** - Berbagi logika bisnis dan UI.
+* **Compose Multiplatform** - Framework UI deklaratif.
+* **SQLDelight** - Pembuatan antarmuka database *type-safe* untuk SQLite.
+* **Jetpack DataStore** - Penyimpanan konfigurasi *key-value* secara asinkron.
+* **Coroutines & Flow** - Manajemen *asynchronous* dan *reactive programming*.
+* **Material Design 2** - Komponen antarmuka pengguna (UI).
+
+---
