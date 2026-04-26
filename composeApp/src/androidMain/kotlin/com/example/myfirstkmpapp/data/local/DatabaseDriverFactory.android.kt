@@ -3,16 +3,10 @@ package com.example.myfirstkmpapp.data.local
 import android.content.Context
 import app.cash.sqldelight.db.SqlDriver
 import app.cash.sqldelight.driver.android.AndroidSqliteDriver
-import com.example.myfirstkmpapp.db.NotesDatabase
+import com.example.myfirstkmpapp.NotesDatabase
 
-actual class DatabaseDriverFactory(
-    private val context: Context
-) {
+actual class DatabaseDriverFactory(private val context: Context) {
     actual fun createDriver(): SqlDriver {
-        return AndroidSqliteDriver(
-            schema = NotesDatabase.Schema,
-            context = context,
-            name = "Notes.sq"
-        )
+        return AndroidSqliteDriver(NotesDatabase.Schema, context, "notesApp.db")
     }
 }

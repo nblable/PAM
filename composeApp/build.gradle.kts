@@ -25,6 +25,7 @@ kotlin {
             implementation(libs.compose.uiToolingPreview)
             implementation(libs.androidx.activity.compose)
             implementation("app.cash.sqldelight:android-driver:2.0.1")
+            implementation("androidx.datastore:datastore-preferences:1.1.0")
         }
         commonMain.dependencies {
             implementation(libs.compose.runtime)
@@ -35,15 +36,15 @@ kotlin {
             implementation(libs.compose.uiToolingPreview)
             implementation(libs.androidx.lifecycle.viewmodelCompose)
             implementation(libs.androidx.lifecycle.runtimeCompose)
-            implementation("org.jetbrains.compose.material:material-icons-extended:1.7.3")
-            implementation("org.jetbrains.compose.components:components-resources:1.6.1")
-            implementation("androidx.compose.material:material-icons-extended:1.6.0")
             implementation("app.cash.sqldelight:runtime:2.0.1")
             implementation("app.cash.sqldelight:coroutines-extensions:2.0.1")
-            implementation("com.russhwolf:multiplatform-settings:1.1.1")
-            implementation("com.russhwolf:multiplatform-settings-no-arg:1.1.1")
-            implementation("com.russhwolf:multiplatform-settings-coroutines:1.1.1")
-            implementation("org.jetbrains.kotlinx:kotlinx-datetime:0.6.1")
+            implementation("androidx.datastore:datastore-preferences-core:1.1.0")
+            implementation("org.jetbrains.androidx.lifecycle:lifecycle-viewmodel-compose:2.8.0")
+            implementation("org.jetbrains.androidx.lifecycle:lifecycle-viewmodel-compose:2.8.0")
+            implementation("org.jetbrains.androidx.lifecycle:lifecycle-runtime-compose:2.8.0")
+            implementation("androidx.compose.material:material-icons-extended:1.7.8")
+            implementation("androidx.compose.material:material:1.11.0")
+            implementation("org.jetbrains.kotlinx:kotlinx-datetime:0.6.0")
         }
         commonTest.dependencies {
             implementation(libs.kotlin.test)
@@ -100,8 +101,8 @@ compose.desktop {
 
 sqldelight {
     databases {
-        create("MyDatabase") {
-            packageName.set("com.example.myfirstkmpapp.db")
+        create("NotesDatabase") {
+            packageName.set("com.example.myfirstkmpapp")
         }
     }
 }
