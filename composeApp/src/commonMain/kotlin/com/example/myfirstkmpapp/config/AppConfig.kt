@@ -1,5 +1,5 @@
 package com.example.myfirstkmpapp.config
 
-expect object AppConfig {
+expect object ApiConfig {
     val geminiApiKey: String
 }

@@ -1,10 +1,10 @@
-# 📝 MyFirstKMPApp - Tugas Praktikum Minggu 9
+# 📝 MyFirstKMPApp - Nutrition AI Analysis
 
-Aplikasi **AI Chat Assistant** berbasis **Kotlin Multiplatform (KMP)** yang mengintegrasikan layanan Google Gemini AI dengan fitur **Platform-Specific** dan desain **UI/UX Modern**.
+Aplikasi **Nutrition AI Analysis** berbasis **Kotlin Multiplatform (KMP)** yang mengintegrasikan layanan Google Gemini AI untuk menganalisis kandungan gizi makanan dengan fitur **Platform-Specific** dan desain **UI/UX Modern**.
 
 ---
 
-## 🏗️ Arsitektur Aplikasi
+## Arsitektur Aplikasi
 
 Aplikasi ini menggunakan pola **MVVM (Model-View-ViewModel)** dengan **Repository Pattern** untuk memisahkan logika bisnis dan UI.
 *   **commonMain**: Berisi logika utama, ViewModel, Repository, dan integrasi API (GeminiService).
@@ -13,13 +13,13 @@ Aplikasi ini menggunakan pola **MVVM (Model-View-ViewModel)** dengan **Repositor
 
 ---
 
-## 🛠️ Detail Implementasi (Rubrik Penilaian Tugas 9)
+## Detail Implementasi
 
 ### 1. Integrasi AI Gemini (Generative AI)
-Aplikasi terhubung langsung ke **Google Gemini API** menggunakan model terbaru (`gemini-1.5-flash` dan `gemini-2.0-flash-exp`).
-*   **Prompt Engineering**: Implementasi instruksi sistem agar AI merespons dalam Bahasa Indonesia yang sopan.
+Aplikasi terhubung langsung ke **Google Gemini API** menggunakan model terbaru (`gemini-2.0-flash` dan `gemini-2.5-flash`).
+*   **Prompt Engineering**: Implementasi instruksi sistem agar AI merespons dalam format JSON terstruktur untuk data nutrisi.
 *   **Multi-Model Support**: Sistem otomatis melakukan *fallback* ke model alternatif jika model utama tidak tersedia.
-*   **Conversation History**: Mendukung konteks percakapan sehingga AI memahami pesan sebelumnya.
+*   **Nutrition Analysis**: Menganalisis makanan dan memberikan informasi kalori, protein, karbohidrat, lemak, dan tips kesehatan.
 
 ### 2. Ktor Multiplatform Networking
 Menggunakan library **Ktor** untuk menangani permintaan HTTP secara asinkron di semua platform.
@@ -28,10 +28,10 @@ Menggunakan library **Ktor** untuk menangani permintaan HTTP secara asinkron di 
 
 ### 3. UI/UX Modern & Custom Theme
 Tampilan aplikasi didesain menggunakan **Material 3** dengan sentuhan kustomisasi:
-*   **Orange Theme**: Skema warna oranye yang cerah dan profesional pada Header, Bubble Chat, dan Action Button.
-*   **Bubble Chat Design**: Perbedaan visual yang kontras antara pesan Pengguna dan AI (Shadow, Corner Radius, Alignment).
-*   **Typing Indicator**: Memberikan umpan balik visual saat AI sedang memproses jawaban.
-*   **Auto-Scroll**: Daftar chat otomatis bergeser ke bawah saat pesan baru masuk.
+*   **Pink Theme**: Skema warna pink yang menarik dan profesional pada Header, Card Nutrisi, dan Action Button.
+*   **Nutrition Card Design**: Tampilan kartu yang informatif untuk menampilkan hasil analisis nutrisi.
+*   **Typing Indicator**: Memberikan umpan balik visual saat AI sedang menganalisis makanan.
+*   **Auto-Scroll**: Daftar konten otomatis bergeser saat hasil analisis muncul.
 
 ### 4. Error Handling & Resilience
 Penanganan kesalahan yang ramah pengguna untuk berbagai skenario:
@@ -41,11 +41,11 @@ Penanganan kesalahan yang ramah pengguna untuk berbagai skenario:
 
 ---
 
-## 📸 Dokumentasi (Screenshots)
+## Screenshots
 
 | Fitur | Screenshot                                                                                                                          |
 | :--- |:------------------------------------------------------------------------------------------------------------------------------------|
-| **Main Chat Screen ** | <img width="720" height="1600" alt="Image" src="https://github.com/user-attachments/assets/7bfa1eee-bf39-41dc-8cb0-94e61efc4df7" /> |
-| **Error Handling ** | <img width="720" height="1600" alt="Image" src="https://github.com/user-attachments/assets/86b0179a-c78a-4535-bb4f-78753f59c3a6" /> |
+| **Nutrition Analysis Screen ** | <img width="720" height="1600" alt="Image" src="https://github.com/user-attachments/assets/011d5262-b9eb-414e-97cb-3b449cd90cbb" /> |
+| **Error Handling ** | <img width="720" height="1600" alt="Image" src="https://github.com/user-attachments/assets/6a96f0ba-1953-41c6-9a4b-37061578b805" /> |
 
 ---

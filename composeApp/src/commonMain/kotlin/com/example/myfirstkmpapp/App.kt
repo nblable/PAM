@@ -5,7 +5,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import com.example.myfirstkmpapp.ui.ChatScreen
+import com.example.myfirstkmpapp.ui.NutritionScreen
 import androidx.compose.ui.tooling.preview.Preview
 
 @Composable
@@ -14,9 +14,9 @@ fun App() {
     MaterialTheme {
         Surface(
             modifier = Modifier.fillMaxSize(),
-            color = MaterialTheme.colorScheme.background
+            color = MaterialTheme.colorScheme.background,
         ) {
-            ChatScreen()
+            NutritionScreen()
         }
     }
 }

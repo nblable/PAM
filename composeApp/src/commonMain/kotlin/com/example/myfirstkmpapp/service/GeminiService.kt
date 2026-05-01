@@ -1,81 +1,137 @@
 package com.example.myfirstkmpapp.service
 
-import com.example.myfirstkmpapp.config.AppConfig
-import com.example.myfirstkmpapp.model.Content
-import com.example.myfirstkmpapp.model.GeminiRequest
-import com.example.myfirstkmpapp.model.GeminiResponse
-import com.example.myfirstkmpapp.model.Part
-import com.example.myfirstkmpapp.utils.getUserFriendlyError
-import io.ktor.client.HttpClient
-import io.ktor.client.call.body
-import io.ktor.client.request.post
-import io.ktor.client.request.setBody
-import io.ktor.client.statement.bodyAsText
-import io.ktor.http.ContentType
-import io.ktor.http.contentType
-import io.ktor.http.isSuccess
+import com.example.myfirstkmpapp.config.ApiConfig
+import com.example.myfirstkmpapp.model.*
+import io.ktor.client.*
+import io.ktor.client.call.*
+import io.ktor.client.plugins.*
+import io.ktor.client.request.*
+import io.ktor.http.*
+import io.ktor.utils.io.errors.*
+import kotlinx.coroutines.delay
+import kotlinx.serialization.SerializationException
+import kotlinx.serialization.json.Json
 
-expect val httpClient: HttpClient
+sealed class AIError(override val message: String) : Exception(message) {
+    data class RateLimited(val retryAfter: Int) : AIError("Kuota API habis. Silakan coba lagi nanti.")
+    data class Unauthorized(override val message: String) : AIError(message)
+    data class ServerError(override val message: String) : AIError(message)
+    data class NetworkError(override val message: String) : AIError(message)
+    data class ParseError(override val message: String) : AIError(message)
+    data class ModelNotFound(override val message: String) : AIError(message)
+}
 
-object GeminiService {
-
-    suspend fun ask(prompt: String, history: List<Pair<String, Boolean>> = emptyList()): Result<String> {
-        val apiKey = AppConfig.geminiApiKey.trim().removeSurrounding("\"")
-
-        if (apiKey.isBlank()) {
-            return Result.failure(Exception("API Key kosong."))
+suspend fun <T> safeAICall(block: suspend () -> T): Result<T> {
+    return try {
+        Result.success(block())
+    } catch (e: AIError) {
+        Result.failure(e)
+    } catch (e: ClientRequestException) {
+        when (e.response.status.value) {
+            401 -> Result.failure(AIError.Unauthorized("API Key tidak valid."))
+            404 -> Result.failure(AIError.ModelNotFound("Versi Model AI tidak ditemukan. Versi Flash yang kamu tuju mungkin belum rilis publik."))
+            429 -> {
+                val retryAfter = e.response.headers["Retry-After"]?.toIntOrNull() ?: 60
+                Result.failure(AIError.RateLimited(retryAfter))
+            }
+            in 500..599 -> Result.failure(AIError.ServerError("Gangguan pada server AI."))
+            else -> Result.failure(AIError.ServerError("Terjadi kesalahan HTTP: ${e.response.status.value}"))
         }
+    } catch (e: IOException) {
+        Result.failure(AIError.NetworkError("Tidak ada koneksi internet. Periksa jaringan kamu."))
+    } catch (e: SerializationException) {
+        Result.failure(AIError.ParseError("Gagal membaca respons dari AI. Format data tidak sesuai."))
+    }
+}
 
-        return try {
-            val modelId = "gemini-2.5-flash"
-
-            val request = GeminiRequest(
-                contents = listOf(
-                    Content(role = "user", parts = listOf(Part(text = "Jawab dalam Bahasa Indonesia: $prompt")))
-                )
-            )
-
-            val httpResponse = httpClient.post(
-                "https://generativelanguage.googleapis.com/v1beta/models/$modelId:generateContent?key=$apiKey"
-            ) {
-                contentType(ContentType.Application.Json)
-                setBody(request)
-            }
-
-            val bodyText = httpResponse.bodyAsText()
-
-            if (httpResponse.status.value == 404) {
-                return retryWithAlternative(apiKey, prompt)
-            }
-
-            if (!httpResponse.status.isSuccess()) {
-                throw Exception("Error ${httpResponse.status.value}: $bodyText")
-            }
-
-            val data = httpResponse.body<GeminiResponse>()
-            val text = data.candidates?.firstOrNull()?.content?.parts?.firstOrNull()?.text
-                ?: throw Exception("Respon kosong")
-
-            Result.success(text)
+suspend fun <T> retryWithBackoff(
+    times: Int = 3,
+    initialDelay: Long = 1000,
+    maxDelay: Long = 10000,
+    factor: Double = 2.0,
+    block: suspend () -> T
+): T {
+    var currentDelay = initialDelay
+    repeat(times - 1) {
+        try {
+            return block()
         } catch (e: Exception) {
-            Result.failure(Exception(getUserFriendlyError(e.message ?: "Gagal")))
+            when {
+                e is AIError.RateLimited -> {
+                    if (e.retryAfter <= 10) {
+                        delay(e.retryAfter * 1000L)
+                    } else {
+                        throw e
+                    }
+                }
+                e is AIError.ModelNotFound -> throw e
+                e is AIError.ServerError -> {
+                    delay(currentDelay)
+                    currentDelay = (currentDelay * factor).toLong().coerceAtMost(maxDelay)
+                }
+                else -> throw e
+            }
         }
     }
+    return block()
+}
 
-    private suspend fun retryWithAlternative(apiKey: String, prompt: String): Result<String> {
-        return try {
-            val httpResponse = httpClient.post(
-                "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-lite:generateContent?key=$apiKey"
-            ) {
+class GeminiService(private val client: HttpClient) {
+    private val baseUrl = "https://generativelanguage.googleapis.com/v1beta"
+
+    private val model = "gemini-2.5-flash"
+
+    private val json = Json { ignoreUnknownKeys = true }
+
+    suspend fun analyzeFood(foodName: String): Result<NutritionInfo> = safeAICall {
+        retryWithBackoff {
+            val prompt = """
+                Kamu adalah nutritionist profesional.
+                Analisis informasi gizi untuk makanan ini: $foodName
+                PENTING: Respond HANYA dengan JSON murni, tanpa markdown ```json, dan tanpa text lain.
+                Format JSON yang harus dipatuhi:
+                {
+                    "name": "nama makanan",
+                    "calories": angka kalori total,
+                    "protein": angka protein dalam gram,
+                    "carbs": angka karbohidrat dalam gram,
+                    "fat": angka lemak dalam gram,
+                    "healthTips": ["tip 1", "tip 2", "tip 3"]
+                }
+            """.trimIndent()
+
+            val request = GeminiRequest(contents = listOf(Content(parts = listOf(Part(text = prompt)))))
+
+            val response: GeminiResponse = client.post("$baseUrl/models/$model:generateContent") {
                 contentType(ContentType.Application.Json)
-                setBody(GeminiRequest(contents = listOf(Content(role = "user", parts = listOf(Part(text = prompt))))))
+                parameter("key", ApiConfig.geminiApiKey)
+                setBody(request)
+            }.body()
+
+            response.error?.let { error ->
+                val errorMessage = error.message ?: ""
+                if (errorMessage.contains("quota", ignoreCase = true) || errorMessage.contains("limit", ignoreCase = true)) {
+                    throw AIError.RateLimited(60)
+                } else if (errorMessage.contains("not found", ignoreCase = true)) {
+                    throw AIError.ModelNotFound("Versi $model belum tersedia di API publik.")
+                } else {
+                    throw AIError.ServerError(errorMessage)
+                }
             }
-            val data = httpResponse.body<GeminiResponse>()
-            val text = data.candidates?.firstOrNull()?.content?.parts?.firstOrNull()?.text
-                ?: throw Exception("Gagal di kedua model")
-            Result.success(text)
-        } catch (e: Exception) {
-            Result.failure(Exception("Model tidak ditemukan di akun Anda. Periksa apakah API Key sudah benar."))
+
+            val candidates = response.candidates
+            if (candidates.isNullOrEmpty()) {
+                throw AIError.ParseError("Tidak ada respons dari AI. Data kosong.")
+            }
+
+            val rawText = candidates.first().content.parts.first().text
+
+            val cleanJson = rawText
+                .replace("```json", "")
+                .replace("```", "")
+                .trim()
+
+            json.decodeFromString<NutritionInfo>(cleanJson)
         }
     }
 }
