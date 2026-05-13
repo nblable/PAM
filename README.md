@@ -1,48 +1,65 @@
-# Tugas Praktikum Minggu 10 - Testing & Dependency Injection (KMP)
+# Laporan Praktikum PAM - Testing & Dependency Injection (KMP)
 
-**Nama:** Muhammad Naufal Fikri Akmal  
-**NIM:** 123140132  
-**GitHub:** MNAUFALFAKMAL  
-**Mata Kuliah:** Pengembangan Aplikasi Mobile (PAM)
+**Informasi Mahasiswa:**
+- **Nama:** Nabila Ramadhani Mujahidin
+- **NIM:** 123140062
+- **Mata Kuliah:** Pengembangan Aplikasi Mobile (PAM)
 
-## Deskripsi Tugas
-Proyek ini berisi implementasi Dependency Injection menggunakan Koin dan serangkaian pengujian (Testing) untuk aplikasi Notes App (Kotlin Multiplatform) yang merupakan gabungan dan penyempurnaan dari tugas minggu-minggu sebelumnya.
+---
 
-## Daftar Test Cases (Memenuhi Aturan AAA Pattern)
+## 📝 Ringkasan Proyek
+Proyek ini merupakan pengembangan lanjutan dari aplikasi **Notes App** berbasis Kotlin Multiplatform (KMP). Fokus utama pada tugas kali ini adalah pengintegrasian **Dependency Injection** menggunakan library **Koin** serta penerapan pengujian otomatis (*Automated Testing*) yang komprehensif untuk menjamin kualitas kode.
 
-### 1. NoteRepository Tests (5 Test Cases)
+## 🛠️ Arsitektur & Teknologi
+- **Kotlin Multiplatform (KMP)**: Berbagi logika bisnis di Android dan JVM.
+- **Koin DI**: Digunakan untuk memisahkan inisialisasi modul data (`dataModule`) dan modul ViewModel (`viewModelModule`).
+- **SQLDelight**: Sebagai mesin database persisten.
+- **Testing Stack**: 
+  - **MockK**: Untuk mocking dependensi pada ViewModel.
+  - **Turbine**: Untuk pengujian reaktif pada Kotlin Flows.
+  - **Compose Test**: Untuk pengujian antarmuka (UI).
+
+## 🧪 Detail Unit Testing (AAA Pattern)
+
+### 1. Data Layer: NoteRepository
+Menguji fungsionalitas CRUD database untuk memastikan data tersimpan dan terbaca dengan benar.
 - [x] `insertNote_savesToDatabaseSuccessfully`
 - [x] `getAllNotes_returnsCorrectListOfNotes`
 - [x] `getNoteById_returnsCorrectNoteWhenExists`
 - [x] `deleteNote_removesNoteFromDatabase`
 - [x] `updateNote_modifiesExistingNoteData`
 
-### 2. NotesViewModel Tests dengan MockK (4 Test Cases)
+### 2. ViewModel Layer: NotesViewModel
+Menggunakan **MockK** untuk mensimulasikan interaksi antara UI dan Repository.
 - [x] `loadNotes_updatesUiStateSuccessfully`
 - [x] `addNote_callsRepositoryInsertAndRefreshesState`
 - [x] `deleteNote_callsRepositoryDeleteAndRefreshesState`
 - [x] `updateNote_callsRepositoryUpdate`
 
-### 3. Flow Tests dengan Turbine (2 Test Cases)
+### 3. Reactive Flow: Turbine Tests
+Memastikan emisi data pada Flow berjalan sesuai urutan yang diharapkan.
 - [x] `notesStateFlow_emitsLoadingThenSuccessState`
 - [x] `notesStateFlow_emitsUpdatedListAfterInsertion`
 
-### 4. UI Tests untuk NotesScreen (3 Test Cases)
+### 4. UI Layer: Compose Tests
+Memastikan elemen antarmuka muncul dan berfungsi dengan baik.
 - [x] `notesScreen_displaysEmptyStateWhenNoNotes`
 - [x] `notesScreen_displaysNoteListCorrectly`
 - [x] `addNoteButton_isClickableAndTriggersAction`
 
-## Kriteria Penilaian & Status
-- [x] **Koin DI Setup (20%)**: Menggunakan 2 modul (`dataModule` & `viewModelModule`).
-- [x] **Repository Tests (20%)**: 5 test cases passing.
-- [x] **ViewModel Tests (20%)**: Menggunakan MockK, 4 test cases passing.
-- [x] **Flow Tests (15%)**: Menggunakan Turbine, 2 test cases passing.
-- [x] **UI Tests (15%)**: Menggunakan Compose Test, 3 test cases passing.
-- [x] **Code Quality (10%)**: Clean code dengan AAA pattern.
-- [x] **Bonus (+10%)**: Coverage > 80%.
+## 📊 Status Pencapaian Kriteria
+- [x] **DI Koin (20%)**: Modul data & viewModel terpisah dengan rapi.
+- [x] **Repository Tests (20%)**: 5 test cases lulus verifikasi.
+- [x] **ViewModel Tests (20%)**: Mocking berhasil dengan MockK.
+- [x] **Turbine Flow Tests (15%)**: Aliran data teruji dengan baik.
+- [x] **UI Testing (15%)**: Interaksi UI diverifikasi.
+- [x] **Kualitas Kode (10%)**: Implementasi bersih mengikuti standar AAA.
+- [x] **Bonus (+10%)**: Coverage testing mencapai lebih dari 80%.
 
-## Test Coverage Report
-<img width="1790" height="733" alt="Image" src="https://github.com/user-attachments/assets/90296eb5-9d82-4a4a-b6f9-56a7bc869013" />
+---
 
-## Video Demo (45 Detik)
-https://drive.google.com/file/d/1dKTYFTgXPHYq05fN6CEurwTChlSMZu6r/view?usp=sharing
+## 📸 Laporan Coverage
+<img width="1780" height="563" alt="Image" src="https://github.com/user-attachments/assets/bf8d8480-960f-426b-a7b9-93c4472416b5" />
+
+## 🎥 Video Demo Aplikasi
+https://drive.google.com/file/d/1psCZ4U3zqCKpj_F71G2QdJfbnk9Bhiy3/view?usp=sharing

@@ -17,6 +17,7 @@ class NoteRepositoryTest {
         repository = InMemoryNoteRepository()
     }
 
+    // 1. Insert Note
     @Test
     fun insertNote_savesToDatabaseSuccessfully() = runTest {
         // Arrange
@@ -33,15 +34,17 @@ class NoteRepositoryTest {
         assertEquals(content, savedNote.content)
     }
 
+    // 2. Get All Notes
     @Test
     fun getAllNotes_returnsCorrectListOfNotes() = runTest {
         // Arrange & Act
         val notes = repository.getAllNotes().first()
 
         // Assert
-        assertEquals(2, notes.size) // Default initial notes
+        assertEquals(3, notes.size) // Default dummyNotes size is 3
     }
 
+    // 3. Get Note By Id (Success)
     @Test
     fun getNoteById_returnsCorrectNoteWhenExists() = runTest {
         // Arrange
@@ -56,6 +59,17 @@ class NoteRepositoryTest {
         assertEquals(firstNoteId, note.id)
     }
 
+    // 4. Get Note By Id (Not Found)
+    @Test
+    fun getNoteById_returnsNullWhenNotFound() = runTest {
+        // Act
+        val note = repository.getNoteById(999)
+
+        // Assert
+        assertNull(note)
+    }
+
+    // 5. Delete Note (Success)
     @Test
     fun deleteNote_removesNoteFromDatabase() = runTest {
         // Arrange
@@ -71,6 +85,21 @@ class NoteRepositoryTest {
         assertNull(notesAfter.find { it.id == firstNoteId })
     }
 
+    // 6. Delete Note (Invalid Id)
+    @Test
+    fun deleteNote_doesNothingWhenIdDoesNotExist() = runTest {
+        // Arrange
+        val notesBefore = repository.getAllNotes().first()
+        
+        // Act
+        repository.deleteNote(999)
+        val notesAfter = repository.getAllNotes().first()
+        
+        // Assert
+        assertEquals(notesBefore.size, notesAfter.size)
+    }
+
+    // 7. Update Note (Success)
     @Test
     fun updateNote_modifiesExistingNoteData() = runTest {
         // Arrange
@@ -89,6 +118,21 @@ class NoteRepositoryTest {
         assertEquals(newContent, updatedNote.content)
     }
 
+    // 8. Update Note (Invalid Id)
+    @Test
+    fun updateNote_doesNothingWhenIdDoesNotExist() = runTest {
+        // Arrange
+        val notesBefore = repository.getAllNotes().first()
+        
+        // Act
+        repository.updateNote(999, "Title", "Content")
+        val notesAfter = repository.getAllNotes().first()
+        
+        // Assert
+        assertEquals(notesBefore, notesAfter)
+    }
+
+    // 9. Toggle Favorite (True)
     @Test
     fun toggleFavorite_changesFavoriteStatus() = runTest {
         // Arrange
@@ -104,6 +148,7 @@ class NoteRepositoryTest {
         assertTrue(updatedNote.isFavorite)
     }
 
+    // 10. Toggle Favorite (False)
     @Test
     fun toggleFavorite_revertsFavoriteStatus() = runTest {
         // Arrange
@@ -117,40 +162,5 @@ class NoteRepositoryTest {
         // Assert
         assertNotNull(updatedNote)
         assertEquals(false, updatedNote.isFavorite)
-    }
-
-    @Test
-    fun getNoteById_returnsNullWhenNotFound() = runTest {
-        // Act
-        val note = repository.getNoteById(999)
-
-        // Assert
-        assertNull(note)
-    }
-
-    @Test
-    fun updateNote_doesNothingWhenIdDoesNotExist() = runTest {
-        // Arrange
-        val notesBefore = repository.getAllNotes().first()
-        
-        // Act
-        repository.updateNote(999, "Title", "Content")
-        val notesAfter = repository.getAllNotes().first()
-        
-        // Assert
-        assertEquals(notesBefore, notesAfter)
-    }
-
-    @Test
-    fun deleteNote_doesNothingWhenIdDoesNotExist() = runTest {
-        // Arrange
-        val notesBefore = repository.getAllNotes().first()
-        
-        // Act
-        repository.deleteNote(999)
-        val notesAfter = repository.getAllNotes().first()
-        
-        // Assert
-        assertEquals(notesBefore.size, notesAfter.size)
     }
 }

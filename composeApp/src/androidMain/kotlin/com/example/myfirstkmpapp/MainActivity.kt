@@ -7,13 +7,25 @@ import androidx.activity.enableEdgeToEdge
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.tooling.preview.Preview
 
+import androidx.compose.runtime.remember
+import com.example.myfirstkmpapp.data.DatabaseDriverFactory
+import com.example.myfirstkmpapp.di.appModule
+import org.koin.android.ext.koin.androidContext
+import org.koin.core.context.startKoin
+
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         enableEdgeToEdge()
         super.onCreate(savedInstanceState)
 
+        val driverFactory = DatabaseDriverFactory(this)
+        startKoin {
+            androidContext(this@MainActivity)
+            modules(appModule(driverFactory))
+        }
+
         setContent {
-            App()
+            App(driverFactory)
         }
     }
 }
@@ -21,5 +33,6 @@ class MainActivity : ComponentActivity() {
 @Preview
 @Composable
 fun AppAndroidPreview() {
-    App()
+    val driverFactory = DatabaseDriverFactory(androidx.compose.ui.platform.LocalContext.current)
+    App(driverFactory)
 }

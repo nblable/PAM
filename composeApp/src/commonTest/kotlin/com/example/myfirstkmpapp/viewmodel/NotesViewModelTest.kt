@@ -42,16 +42,18 @@ class NotesViewModelTest {
         Dispatchers.resetMain()
     }
 
+    // --- UNIT TESTS (MOCKK) ---
+
+    // 11. Load Notes Success
     @Test
     fun loadNotes_updatesUiStateSuccessfully() = runTest {
         viewModel.notes.test {
-            // State awal dari stateIn (initialValue)
             assertEquals(emptyList(), awaitItem())
-            // Data dari repository
             assertEquals(fakeNotes, awaitItem())
         }
     }
 
+    // 12. Add Note
     @Test
     fun addNote_callsRepositoryInsert() = runTest {
         val title = "New Note"
@@ -64,6 +66,7 @@ class NotesViewModelTest {
         coVerify { repository.insertNote(title, content) }
     }
 
+    // 13. Delete Note
     @Test
     fun deleteNote_callsRepositoryDelete() = runTest {
         val id = 1
@@ -75,6 +78,7 @@ class NotesViewModelTest {
         coVerify { repository.deleteNote(id) }
     }
 
+    // 14. Update Note
     @Test
     fun updateNote_callsRepositoryUpdate() = runTest {
         val id = 1
@@ -88,6 +92,49 @@ class NotesViewModelTest {
         coVerify { repository.updateNote(id, title, content) }
     }
 
+    // --- FLOW TESTS (TURBINE) ---
+
+    // 15. Flow Loading to Success
+    @Test
+    fun notesStateFlow_emitsInitialEmptyThenData() = runTest {
+        viewModel.notes.test {
+            assertEquals(emptyList(), awaitItem())
+            assertEquals(fakeNotes, awaitItem())
+        }
+    }
+
+    // 16. Flow Emits Updated List After Insertion
+    @Test
+    fun notesStateFlow_emitsUpdatedListAfterInsertion() = runTest {
+        viewModel.notes.test {
+            assertEquals(emptyList(), awaitItem())
+            assertEquals(fakeNotes, awaitItem())
+
+            val updatedNotes = fakeNotes + Note(3, "Title 3", "Content 3")
+            notesFlow.value = updatedNotes
+
+            assertEquals(updatedNotes, awaitItem())
+        }
+    }
+
+    // 17. Flow Reflects Multiple Changes
+    @Test
+    fun notesStateFlow_reflectsMultipleChanges() = runTest {
+        viewModel.notes.test {
+            assertEquals(emptyList(), awaitItem())
+            assertEquals(fakeNotes, awaitItem())
+
+            val list1 = fakeNotes.filter { it.id != 1 }
+            notesFlow.value = list1
+            assertEquals(list1, awaitItem())
+
+            val list2 = list1 + Note(4, "Title 4", "Content 4")
+            notesFlow.value = list2
+            assertEquals(list2, awaitItem())
+        }
+    }
+
+    // 18. Toggle Favorite
     @Test
     fun toggleFavorite_callsRepositoryToggle() = runTest {
         val id = 1
@@ -99,67 +146,23 @@ class NotesViewModelTest {
         coVerify { repository.toggleFavorite(id) }
     }
 
+    // 19. Search Notes
     @Test
-    fun getNoteById_returnsCorrectNoteFromRepo() = runTest {
-        val id = 1
-        val expectedNote = fakeNotes[0]
-        coEvery { repository.getNoteById(id) } returns expectedNote
+    fun searchNotes_updatesUiStateWithResults() = runTest {
+        val query = "Title 1"
+        val searchResults = listOf(fakeNotes[0])
+        val searchFlow = MutableStateFlow(searchResults)
+        
+        coEvery { repository.searchNotes(query) } returns searchFlow
 
-        val result = viewModel.getNoteById(id)
-
-        assertEquals(expectedNote, result)
-        coVerify { repository.getNoteById(id) }
-    }
-
-    // --- TURBINE FLOW TESTS ---
-
-    @Test
-    fun notesStateFlow_emitsInitialEmptyThenData() = runTest {
         viewModel.notes.test {
-            // Case 1: Memastikan emisi pertama adalah list kosong (loading state)
+            // StateFlow akan memancarkan initialValue (emptyList) terlebih dahulu saat disubscribe
             assertEquals(emptyList(), awaitItem())
-            // Case 2: Memastikan emisi kedua adalah data dari repo
-            assertEquals(fakeNotes, awaitItem())
+
+            viewModel.searchNotes(query)
+            
+            // Kemudian memancarkan hasil pencarian
+            assertEquals(searchResults, awaitItem())
         }
-    }
-
-    @Test
-    fun notesStateFlow_emitsUpdatedListAfterInsertion() = runTest {
-        viewModel.notes.test {
-            assertEquals(emptyList(), awaitItem())
-            assertEquals(fakeNotes, awaitItem())
-
-            // Simulate repository update
-            val updatedNotes = fakeNotes + Note(3, "Title 3", "Content 3")
-            notesFlow.value = updatedNotes
-
-            assertEquals(updatedNotes, awaitItem())
-        }
-    }
-
-    @Test
-    fun notesStateFlow_reflectsMultipleChanges() = runTest {
-        viewModel.notes.test {
-            assertEquals(emptyList(), awaitItem())
-            assertEquals(fakeNotes, awaitItem())
-
-            // Change 1: Hapus satu
-            val list1 = fakeNotes.filter { it.id != 1 }
-            notesFlow.value = list1
-            assertEquals(list1, awaitItem())
-
-            // Change 2: Tambah satu
-            val list2 = list1 + Note(4, "Title 4", "Content 4")
-            notesFlow.value = list2
-            assertEquals(list2, awaitItem())
-        }
-    }
-
-    @Test
-    fun getNoteById_returnsNullWhenRepoReturnsNull() = runTest {
-        val id = 99
-        coEvery { repository.getNoteById(id) } returns null
-        val result = viewModel.getNoteById(id)
-        assertEquals(null, result)
     }
 }

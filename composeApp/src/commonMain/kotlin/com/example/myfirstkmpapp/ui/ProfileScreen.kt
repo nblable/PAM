@@ -1,41 +1,18 @@
 package com.example.myfirstkmpapp.ui
 
 import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.border
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.AccountBox
 import androidx.compose.material.icons.filled.Email
-import androidx.compose.material.icons.filled.Info
-import androidx.compose.material.icons.filled.LocationOn
-import androidx.compose.material.icons.filled.Phone
-import androidx.compose.material3.Button
-import androidx.compose.material3.Card
-import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.Icon
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedButton
-import androidx.compose.material3.OutlinedTextField
-import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Switch
-import androidx.compose.material3.Text
-import androidx.compose.material3.TopAppBar
-import androidx.compose.material3.TopAppBarDefaults
+import androidx.compose.material.icons.filled.School
+import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -43,11 +20,12 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import com.example.myfirstkmpapp.data.ProfileUiState
 import myfirstkmpapp.composeapp.generated.resources.Res
-import myfirstkmpapp.composeapp.generated.resources.goku
+import myfirstkmpapp.composeapp.generated.resources.nabilacantik
 import org.jetbrains.compose.resources.painterResource
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -56,9 +34,6 @@ fun ProfileScreen(
     uiState: ProfileUiState,
     onNameChange: (String) -> Unit,
     onBioChange: (String) -> Unit,
-    onEmailChange: (String) -> Unit,
-    onPhoneChange: (String) -> Unit,
-    onLocationChange: (String) -> Unit,
     onToggleBio: () -> Unit,
     onToggleEdit: () -> Unit,
     onToggleDarkMode: () -> Unit
@@ -66,21 +41,22 @@ fun ProfileScreen(
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text("My Profile App") },
+                title = { Text("My Profile", fontSize = 18.sp, fontWeight = FontWeight.SemiBold) },
                 actions = {
                     Row(verticalAlignment = Alignment.CenterVertically) {
-                        Text(if (uiState.isDarkMode) "🌙" else "☀️")
-                        Spacer(modifier = Modifier.width(8.dp))
+                        Text(if (uiState.isDarkMode) "🌙" else "☀️", fontSize = 16.sp)
+                        Spacer(Modifier.width(8.dp))
                         Switch(
                             checked = uiState.isDarkMode,
-                            onCheckedChange = { onToggleDarkMode() }
+                            onCheckedChange = { onToggleDarkMode() },
+                            colors = SwitchDefaults.colors(checkedThumbColor = MaterialTheme.colorScheme.primary)
                         )
-                        Spacer(modifier = Modifier.width(16.dp))
+                        Spacer(Modifier.width(8.dp))
                     }
                 },
                 colors = TopAppBarDefaults.topAppBarColors(
-                    containerColor = MaterialTheme.colorScheme.primaryContainer,
-                    titleContentColor = MaterialTheme.colorScheme.onPrimaryContainer
+                    containerColor = MaterialTheme.colorScheme.surface,
+                    titleContentColor = MaterialTheme.colorScheme.primary
                 )
             )
         },
@@ -90,87 +66,83 @@ fun ProfileScreen(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(paddingValues)
-                .padding(horizontal = 16.dp)
                 .verticalScroll(rememberScrollState()),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            Spacer(modifier = Modifier.height(24.dp))
-
-            ProfileHeader(name = uiState.name, role = uiState.role)
-
-            Spacer(modifier = Modifier.height(24.dp))
-
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.spacedBy(8.dp)
+            Card(
+                colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
+                shape = RoundedCornerShape(bottomStart = 12.dp, bottomEnd = 12.dp),
+                modifier = Modifier.fillMaxWidth().padding(bottom = 8.dp)
             ) {
-                Button(
-                    onClick = onToggleBio,
-                    modifier = Modifier.weight(1f)
-                ) {
-                    Text(text = if (uiState.isBioVisible) "Tutup Bio" else "Buka Bio")
-                }
+                Column(modifier = Modifier.padding(16.dp)) {
+                    ProfileHeader(name = uiState.name, role = uiState.role)
+                    Spacer(modifier = Modifier.height(16.dp))
 
-                OutlinedButton(
-                    onClick = onToggleEdit,
-                    modifier = Modifier.weight(1f)
-                ) {
-                    Text(text = if (uiState.isEditing) "Batal Edit" else "Edit Profile")
+                    Row(horizontalArrangement = Arrangement.spacedBy(8.dp), modifier = Modifier.fillMaxWidth()) {
+                        Button(
+                            onClick = onToggleBio,
+                            modifier = Modifier.weight(1f)
+                        ) { Text(if (uiState.isBioVisible) "Close Bio" else "Open Bio") }
+
+                        OutlinedButton(
+                            onClick = onToggleEdit,
+                            border = androidx.compose.foundation.BorderStroke(1.dp, MaterialTheme.colorScheme.primary),
+                            modifier = Modifier.weight(1f)
+                        ) {
+                            Text(if (uiState.isEditing) "Cancel Edit" else "Edit Profile")
+                        }
+                    }
                 }
             }
 
-            Spacer(modifier = Modifier.height(16.dp))
-
             AnimatedVisibility(visible = uiState.isEditing) {
                 Card(
-                    modifier = Modifier.fillMaxWidth(),
-                    colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceVariant)
+                    modifier = Modifier.fillMaxWidth().padding(vertical = 4.dp),
+                    colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface)
                 ) {
                     Column(modifier = Modifier.padding(16.dp)) {
                         Text("Edit Profile", fontWeight = FontWeight.Bold, color = MaterialTheme.colorScheme.primary)
                         Spacer(modifier = Modifier.height(8.dp))
 
                         StatelessEditField(label = "Name", value = uiState.name, onValueChange = onNameChange)
-                        Spacer(modifier = Modifier.height(8.dp))
                         StatelessEditField(label = "Bio", value = uiState.bio, onValueChange = onBioChange)
-                        StatelessEditField(label = "Email", value = uiState.email, onValueChange = onEmailChange)
-                        Spacer(modifier = Modifier.height(4.dp))
-                        StatelessEditField(label = "Phone", value = uiState.phone, onValueChange = onPhoneChange)
-                        Spacer(modifier = Modifier.height(4.dp))
-                        StatelessEditField(label = "Location", value = uiState.location, onValueChange = onLocationChange)
 
-                        Spacer(modifier = Modifier.height(16.dp))
-                        Button(onClick = onToggleEdit, modifier = Modifier.fillMaxWidth()) {
-                            Text("Simpan Perubahan")
-                        }
+                        Spacer(modifier = Modifier.height(8.dp))
+                        Button(
+                            onClick = onToggleEdit,
+                            modifier = Modifier.fillMaxWidth()
+                        ) { Text("Save Changes") }
                     }
                 }
             }
 
-            Spacer(modifier = Modifier.height(8.dp))
-
             AnimatedVisibility(visible = uiState.isBioVisible && !uiState.isEditing) {
-                BioCard(description = uiState.bio)
+                Card(
+                    modifier = Modifier.fillMaxWidth().padding(vertical = 4.dp),
+                    colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface)
+                ) {
+                    Column(modifier = Modifier.padding(16.dp)) {
+                        Text("YTTA", fontWeight = FontWeight.Bold)
+                        Spacer(modifier = Modifier.height(8.dp))
+                        Text(uiState.bio, color = MaterialTheme.colorScheme.onSurface)
+                    }
+                }
             }
 
-            Spacer(modifier = Modifier.height(24.dp))
-
-            Text(
-                text = "Contact Information",
-                style = MaterialTheme.typography.titleMedium,
-                color = MaterialTheme.colorScheme.primary,
-                modifier = Modifier.align(Alignment.Start)
-            )
-
-            Spacer(modifier = Modifier.height(8.dp))
-
-            Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
-                InfoRowItem(icon = Icons.Default.Email, label = "Email", value = uiState.email)
-                InfoRowItem(icon = Icons.Default.Phone, label = "Phone", value = uiState.phone)
-                InfoRowItem(icon = Icons.Default.LocationOn, label = "Location", value = uiState.location)
+            Card(
+                modifier = Modifier.fillMaxWidth().padding(top = 8.dp),
+                colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface)
+            ) {
+                Column(modifier = Modifier.padding(16.dp)) {
+                    Text("Kalo Mau Tau", fontWeight = FontWeight.Bold)
+                    Spacer(modifier = Modifier.height(16.dp))
+                    InfoRowItem(Icons.Default.Email, "Email", "nabila.123140062@student.itera.ac.id")
+                    HorizontalDivider(modifier = Modifier.padding(vertical = 12.dp))
+                    InfoRowItem(Icons.Default.AccountBox, "Instagram", "@nblramadhanii")
+                    HorizontalDivider(modifier = Modifier.padding(vertical = 12.dp))
+                    InfoRowItem(Icons.Default.School, "Education", "Institut Teknologi Sumatera")
+                }
             }
-
-            Spacer(modifier = Modifier.height(32.dp))
         }
     }
 }
@@ -181,72 +153,41 @@ fun StatelessEditField(label: String, value: String, onValueChange: (String) -> 
         value = value,
         onValueChange = onValueChange,
         label = { Text(label) },
-        modifier = Modifier.fillMaxWidth(),
+        modifier = Modifier.fillMaxWidth().padding(vertical = 4.dp),
         singleLine = label != "Bio"
     )
 }
 
 @Composable
 fun ProfileHeader(name: String, role: String) {
-    Column(horizontalAlignment = Alignment.CenterHorizontally, modifier = Modifier.fillMaxWidth()) {
+    Row(verticalAlignment = Alignment.Top, modifier = Modifier.fillMaxWidth()) {
         Box(
-            modifier = Modifier
-                .size(120.dp)
-                .clip(CircleShape)
-                .background(MaterialTheme.colorScheme.secondaryContainer),
-            contentAlignment = Alignment.Center
+            modifier = Modifier.size(88.dp).clip(CircleShape).border(2.dp, MaterialTheme.colorScheme.primary, CircleShape)
         ) {
             Image(
-                painter = painterResource(Res.drawable.goku),
-                contentDescription = "Foto Profil",
+                painter = painterResource(Res.drawable.nabilacantik),
+                contentDescription = "Profile Photo",
                 contentScale = ContentScale.Crop,
-                modifier = Modifier.size(120.dp).clip(CircleShape)
+                modifier = Modifier.fillMaxSize()
             )
         }
-        Spacer(modifier = Modifier.height(16.dp))
-        Text(text = name, style = MaterialTheme.typography.headlineMedium, fontWeight = FontWeight.Bold, color = MaterialTheme.colorScheme.onSurface)
-        Text(text = role, style = MaterialTheme.typography.bodyLarge, color = MaterialTheme.colorScheme.secondary)
-    }
-}
-
-@Composable
-fun BioCard(description: String) {
-    Card(
-        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceVariant),
-        elevation = CardDefaults.cardElevation(defaultElevation = 2.dp),
-        modifier = Modifier.fillMaxWidth()
-    ) {
-        Column(modifier = Modifier.padding(16.dp)) {
-            Row(verticalAlignment = Alignment.CenterVertically) {
-                Icon(imageVector = Icons.Default.Info, contentDescription = null, tint = MaterialTheme.colorScheme.primary)
-                Spacer(modifier = Modifier.width(8.dp))
-                Text(text = "About Me", style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.Bold)
-            }
-            Spacer(modifier = Modifier.height(8.dp))
-            Text(text = description, style = MaterialTheme.typography.bodyMedium, textAlign = TextAlign.Justify)
+        Spacer(modifier = Modifier.width(16.dp))
+        Column(modifier = Modifier.weight(1f)) {
+            Text(name, style = MaterialTheme.typography.titleLarge, fontWeight = FontWeight.Bold)
+            Text(role, style = MaterialTheme.typography.bodyMedium, maxLines = 2, overflow = TextOverflow.Ellipsis)
+            Text("500+ connections", style = MaterialTheme.typography.labelMedium, color = MaterialTheme.colorScheme.primary)
         }
     }
 }
 
 @Composable
 fun InfoRowItem(icon: ImageVector, label: String, value: String) {
-    Card(
-        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
-        border = BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant),
-        modifier = Modifier.fillMaxWidth()
-    ) {
-        Row(modifier = Modifier.padding(16.dp).fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
-            Box(
-                modifier = Modifier.size(40.dp).clip(CircleShape).background(MaterialTheme.colorScheme.primaryContainer),
-                contentAlignment = Alignment.Center
-            ) {
-                Icon(imageVector = icon, contentDescription = label, tint = MaterialTheme.colorScheme.onPrimaryContainer)
-            }
-            Spacer(modifier = Modifier.width(16.dp))
-            Column {
-                Text(text = label, style = MaterialTheme.typography.labelMedium, color = MaterialTheme.colorScheme.secondary)
-                Text(text = value, style = MaterialTheme.typography.bodyLarge, fontWeight = FontWeight.Medium, color = MaterialTheme.colorScheme.onSurface)
-            }
+    Row(verticalAlignment = Alignment.CenterVertically) {
+        Icon(icon, contentDescription = label, tint = MaterialTheme.colorScheme.onSurface, modifier = Modifier.size(24.dp))
+        Spacer(modifier = Modifier.width(16.dp))
+        Column {
+            Text(label, style = MaterialTheme.typography.labelSmall)
+            Text(value, style = MaterialTheme.typography.bodyMedium, color = MaterialTheme.colorScheme.primary)
         }
     }
 }
